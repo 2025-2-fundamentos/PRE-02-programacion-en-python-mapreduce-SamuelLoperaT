@@ -83,7 +83,7 @@ def create_directory(directory):
 
 def save_output(output_directory, sequence):
     """Save Output"""
-    filepath = os.path.join(output_directory, "result.txt")
+    filepath = os.path.join(output_directory, "part-00000.txt")
     with open(filepath, "w", encoding="utf-8") as f:
         for k, v in sorted(sequence, key=lambda x: -x[1]):
             f.write(f"{k}\t{v}\n")
