@@ -1,27 +1,24 @@
-"""Taller evaluable"""
-
-# pylint: disable=broad-exception-raised
-
-import fileinput
-import glob
-import os.path
-import time
-from itertools import groupby
-
 import os
 import shutil
 import time
-import random
 from collections import defaultdict
-from toolz.itertoolz import concat, pluck
+from toolz.itertoolz import concat
+
+
+# Ruta base (sube un nivel desde el script actual)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+FILES_DIR = os.path.join(BASE_DIR, "files")
 
 
 def copy_raw_files_to_input_folder(n):
     """Generate n copies of the raw files in the input folder"""
-    os.makedirs("files/input", exist_ok=True)
-    raw_dir = "files/raw"
+    input_dir = os.path.join(FILES_DIR, "input")
+    raw_dir = os.path.join(FILES_DIR, "raw")
+
+    os.makedirs(input_dir, exist_ok=True)
+
     if not os.path.exists(raw_dir):
-        print("Directorio 'files/raw' no existe, crea archivos de prueba...")
+        print("Directorio 'files/raw' no existe, creando archivos de prueba...")
         os.makedirs(raw_dir, exist_ok=True)
         with open(os.path.join(raw_dir, "sample.txt"), "w", encoding="utf-8") as f:
             f.write("Hola mundo\nMap Reduce en Python\nHola ChatGPT\n")
@@ -30,7 +27,7 @@ def copy_raw_files_to_input_folder(n):
     for i in range(n):
         for f in raw_files:
             src = os.path.join(raw_dir, f)
-            dst = os.path.join("files/input", f"copy_{i}_{f}")
+            dst = os.path.join(input_dir, f"copy_{i}_{f}")
             shutil.copy(src, dst)
 
 
@@ -111,15 +108,16 @@ def run_job(input_directory, output_directory):
 
 
 if __name__ == "__main__":
+    input_dir = os.path.join(FILES_DIR, "input")
+    output_dir = os.path.join(FILES_DIR, "output")
+
     copy_raw_files_to_input_folder(n=10)
 
     start_time = time.time()
 
-    run_job(
-        "files/input",
-        "files/output",
-    )
+    run_job(input_dir, output_dir)
 
     end_time = time.time()
     print(f"Tiempo de ejecución: {end_time - start_time:.2f} segundos")
+
 
