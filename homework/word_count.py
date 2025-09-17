@@ -3,6 +3,7 @@ import shutil
 import time
 from collections import defaultdict
 from toolz.itertoolz import concat
+import re
 
 
 # Ruta base (sube un nivel desde el script actual)
@@ -16,12 +17,6 @@ def copy_raw_files_to_input_folder(n):
     raw_dir = os.path.join(FILES_DIR, "raw")
 
     os.makedirs(input_dir, exist_ok=True)
-
-    if not os.path.exists(raw_dir):
-        print("Directorio 'files/raw' no existe, creando archivos de prueba...")
-        os.makedirs(raw_dir, exist_ok=True)
-        with open(os.path.join(raw_dir, "sample.txt"), "w", encoding="utf-8") as f:
-            f.write("Hola mundo\nMap Reduce en Python\nHola ChatGPT\n")
 
     raw_files = os.listdir(raw_dir)
     for i in range(n):
@@ -41,9 +36,14 @@ def load_input(input_directory):
     return sequence
 
 
+
+
 def preprocess_line(x):
     """Preprocess the line x"""
-    return x.strip().lower()
+    # Minúsculas y quitar caracteres que no sean letras/números/espacios
+    x = x.strip().lower()
+    x = re.sub(r"[^a-záéíóúüñ0-9\s]", " ", x)  # conserva letras y números
+    return x
 
 
 def map_line(x):
@@ -111,7 +111,7 @@ if __name__ == "__main__":
     input_dir = os.path.join(FILES_DIR, "input")
     output_dir = os.path.join(FILES_DIR, "output")
 
-    copy_raw_files_to_input_folder(n=10)
+    copy_raw_files_to_input_folder(n=1000)
 
     start_time = time.time()
 
